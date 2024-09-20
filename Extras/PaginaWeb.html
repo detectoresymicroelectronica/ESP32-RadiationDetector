@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html> 
+  <script src='https://www.gstatic.com/charts/loader.js'></script> 
+  <head><link rel='shortcut icon' href='about:blank'></head> 
+  <body> <h1> ESP32-Detector</h1> 
+    <div id='dosis-chart'></div> 
+    <div class='a'><p>*The values expressed are approximate and their use is only recommended for educational purposes.</p></div>
+  </body> 
+  <style> 
+    h1 { text-align: center; font: Arial; font-size: 24px;} 
+    div.a { text-align: center; font: Arial; font-size: 12px;} 
+  </style> 
+  <script> 
+    const CONV = 0.1386; 
+    google.charts.load('current', {
+      callback: function () { 
+        var chart2 = new google.visualization.LineChart(document.getElementById('dosis-chart')); 
+        var options2 = { 
+          title : 'Dose Rate*', 
+          animation: { duration: 500, easing: 'out', startup: true }, 
+          hAxis: { title: 'Time', 'format':'hh:mm:ss' }, 
+          vAxis: { title: 'Dose Rate (uSv/h)' }, 
+          height: 400, 
+          legend: 'bottom', 
+          pointSize: 10, 
+          series: { 0: {curveType: 'line', lineDashStyle: [2, 2]}, 1: {curveType: 'function'} }, 
+          enableInteractivity: false 
+        }; 
+      
+        function getData(){ 
+          var xhr = new XMLHttpRequest(); 
+          xhr.open('GET', '/counts', true); 
+          xhr.send(null); 
+          xhr.onreadystatechange = function(data){ 
+            if (xhr.readyState == 4 && xhr.status == 200){ 
+              var cuentas = parseFloat(xhr.responseText); 
+              var tasadosis = cuentas * CONV; 
+              
+              drawChart(tasadosis); 
+            } 
+          } 
+        } 
+        
+        var data2 = new google.visualization.DataTable(); 
+        data2.addColumn('datetime', 'Time'); 
+        data2.addColumn('number', 'Dose Rate'); 
+        data2.addColumn('number', 'Mean'); 
+        
+        var data3 = new google.visualization.DataTable(); 
+        data3.addColumn('number', 'Dose Rate'); 
+        getData(); 
+        setInterval(getData, 700);
+
+        function drawChart(tasadosis) { 
+          var tiempo = new Date(); 
+          data3.addRow([tasadosis]); 
+          if(data3.getNumberOfRows() > 32){ 
+            data3.removeRow(0); 
+          }
+
+          var mean = 0; 
+          for (var i = 0; i < data3.getNumberOfRows(); i++) {
+            mean = mean + data3.getValue(i, 0); 
+          } 
+
+          mean = mean / data3.getNumberOfRows(); 
+          data2.addRow([tiempo, tasadosis, mean]); 
+          
+          if(data2.getNumberOfRows() > 128){ 
+            data2.removeRow(0); 
+          } 
+          
+          chart2.draw(data2, options2); 
+          
+        } 
+      }, 
+      packages:['corechart'] 
+    }); 
+  </script> 
+</html>
