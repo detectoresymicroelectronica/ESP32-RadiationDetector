@@ -31,7 +31,7 @@ The dosimeter enables the estimation of the radiation dose produced by a high-en
 
 The measured data is visualized on an embedded web page that uses [Google Chart](https://developers.google.com/chart) for data visualization. Consequently, a connection to a device with internet access is necessary to load the required API.
 
-Although the results obtained from this application have been validated using a calibrated Co-60 source, it is important to note that its use is restricted to educational purposes only and can not be used as a personal dosimeter.
+Although the results obtained from this application have been validated using a calibrated Cs-137 source, it is important to note that its use is restricted to educational purposes only and can not be used as a personal dosimeter.
 
 ## Spectrometer
 The spectrometer can analyze the energy spectrum for photons in the 2-16keV range. The resulting histogram is transmitted through the serial port and can be displayed using the [Capturador.py](Capturador/Capturador.py) Python script.
