@@ -22,7 +22,7 @@ To program the ESP32-Cam we must install and configure the esp-idf environment f
 - Download any of the  projects in this repository.
 - Open Visual Studio Code.
 - Open the "ESP-IDF:Explorer" extension environment, verifying that new icons appear at the bottom of the Visual Studio Code window.
-- Open the main project folder by clicking on the "file" menu, then "Open Folder", find the project folder and open the [Codigo]{Dosimetro/Codigo} directory.
+- Open the main project folder by clicking on the "file" menu, then "Open Folder", find the project folder and open the "Codigo" folder. For example, the main folder in the dosimeter project is located in the [Dosimetro/Codigo](Dosimetro/Codigo) directory.
 - Click on the "ESP-IDF:Build project" icon to start the compilation process, and wait until it finishes.
 - Click on the "ESP-IDF:Flash Device" icon, indicating the serial port to which the platform is connected and defining a UART connection.
 - Once the programming is finished, open a serial monitor by clicking on the “ESP-IDF: Monitor Device” icon to verify the correct programming.
