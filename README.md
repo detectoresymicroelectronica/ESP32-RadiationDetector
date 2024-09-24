@@ -14,6 +14,19 @@ The user assumes all risks and responsibilities associated with the use of this 
 
 Additionally, it is the user's responsibility to ensure that the use of this code complies with all applicable laws and regulations.
 
+## User guide
+In order to use any of the projects in this repository, we need to have an [ESP32Cam and a USB-Serial bridge](https://makeradvisor.com/tools/esp32-cam-mb-usb-programmer/) to be able to program the microcontroller. In addition, to prepare the ESP32-CAM for radiation detection, the OV2640 camera lens should be removed, and the sensor must be completely shielded from ambient light. Aluminum foil provides an effective and convenient method for this, fully blocking visible light while minimally attenuating X-ray and gamma-ray photons.
+
+To program the ESP32-Cam we must install and configure the esp-idf environment following the steps detailed in the [official installation guide](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md). Once the installation is complete, continue with the following steps:
+
+- Download any of the  projects in this repository.
+- Open Visual Studio Code.
+- Open the "ESP-IDF:Explorer" extension environment, verifying that new icons appear at the bottom of the Visual Studio Code window.
+- Open the main project folder by clicking on the "file" menu, then "Open Folder", find the project folder and open the [Codigo]{Dosimetro/Codigo} directory.
+- Click on the "ESP-IDF:Build project" icon to start the compilation process, and wait until it finishes.
+- Click on the "ESP-IDF:Flash Device" icon, indicating the serial port to which the platform is connected and defining a UART connection.
+- Once the programming is finished, open a serial monitor by clicking on the “ESP-IDF: Monitor Device” icon to verify the correct programming.
+
 ## Radiation detection using CMOS sensors
 A commercial CMOS image sensor, originally designed for visible light, can also be used as an X-ray or gamma-ray detector. Although the interaction mechanism differs, the energy deposited by the incident particle generates electron-hole pairs within the sensor's volume. These charge carriers are collected by the photosensitive structures of each pixel, resulting in what is known as an 'event'. Each event can be visualized as small points in the obtained images, where the size and intensity of these points are directly related to the energy of the incident particle. Concurrently, the number of events is correlated with the quantity of photons interacting with the sensor.
 
@@ -22,19 +35,28 @@ Commercial cameras typically have configurations designed to enhance the quality
 In these projects the camera is the OV2640 CMOS image sensor, which is able of bypassing its DSP to provide raw pixel-level data. This raw data is processed in real time by the firmware embedded in the ESP32 to determine the quantity or intensity of the events produced.
 
 ## General remarks
-To prepare the ESP32-CAM for radiation detection, the OV2640 camera lens should be removed, and the sensor must be completely shielded from ambient light. Aluminum foil provides an effective and convenient method for this, fully blocking visible light while minimally attenuating X-ray and gamma-ray photons.
-
-Although both projects share many files from the [ESP32 Camera Driver](https://github.com/espressif/esp32-camera) project, located in thier cprresponding folders, the "esp_camara.c" and "cam_hal.c" files have been adapted to meet the unique requirements of each project.
+Although both projects share many files from the [ESP32 Camera Driver](https://github.com/espressif/esp32-camera) project, located in their corresponding folders, the "esp_camara.c" and "cam_hal.c" files have been adapted to meet the unique requirements of each project.
 
 ## Dosimeter
 The dosimeter enables the estimation of the radiation dose produced by a high-energy gamma source through the quantification of detected events.
 
 The measured data is visualized on an embedded web page that uses [Google Chart](https://developers.google.com/chart) for data visualization. Consequently, a connection to a device with internet access is necessary to load the required API.
 
+To connect to a WIFI network we must modify the [dosimeter.c](Dosimetro/Codigo/main/dosimeter.c) file before compiling the code, adding the network name and password. Once the programming is finished, the serial monitor will indicate whether the connection was successful and the IP address of the device.
+
+```C
+#define WIFI_SSID "SSID"
+#define WIFI_PASS "PASS"
+```
+
+To open the device's website, enter the IP address in the web browser of a device connected to the same network.
+
 Although the results obtained from this application have been validated using a calibrated Cs-137 source, it is important to note that its use is restricted to educational purposes only and can not be used as a personal dosimeter.
 
 ## Spectrometer
 The spectrometer can analyze the energy spectrum for photons in the 2-16keV range. The resulting histogram is transmitted through the serial port and can be displayed using the [Capturador.py](Capturador/Capturador.py) Python script.
+
+Before running the script we must close the ESP-IDF monitor, otherwise Python will not be able to access the serial port.
 
 The script's energy calibration was based on the copper emission lines. However, this calibration can be adjusted if the camera's gain setting is modified. The camera gain can be controlled using the "set_agc_gain" function within the [esp_camara.c](Espectrometro/Librerias/esp_camara.c) file.
 
